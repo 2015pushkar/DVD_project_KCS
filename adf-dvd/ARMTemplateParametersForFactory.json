@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-dvd"
+		},
+		"AzureBlobStorage_in_connectionString": {
+			"value": ""
+		},
+		"PostgreSql_input_connectionString": {
+			"value": ""
+		},
+		"ls_cus_test_in_connectionString": {
+			"value": ""
+		},
+		"ls_forINPUTDB_connectionString": {
+			"value": ""
+		},
+		"sql_DB_SOURCE_connectionString": {
+			"value": ""
+		},
+		"staging_server_connectionString": {
+			"value": ""
+		}
+	}
+}

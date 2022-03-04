@@ -1,0 +1,680 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-dvd"
+		},
+		"AzureBlobStorage_in_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_in'"
+		},
+		"PostgreSql_input_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'PostgreSql_input'"
+		},
+		"ls_cus_test_in_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_cus_test_in'"
+		},
+		"ls_forINPUTDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_forINPUTDB'"
+		},
+		"sql_DB_SOURCE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sql_DB_SOURCE'"
+		},
+		"staging_server_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'staging_server'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage_in')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage_in_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PostgreSql_input')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "PostgreSql",
+				"typeProperties": {
+					"connectionString": "[parameters('PostgreSql_input_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_cus_test_in')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_cus_test_in_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_forINPUTDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_forINPUTDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sql_DB_SOURCE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('sql_DB_SOURCE_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/staging_server')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('staging_server_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IR-PostgreSQL')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSQLstart_date_fetch')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "START_DATE",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "start_date_fetch"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DATE_FETCH_PRODUCTS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_input"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PRODUCT_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "START_DATE",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "start_date_fetch_PRODUCT"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_o_DIM2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_input"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "S_KEY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRODUCT_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CATEGORY_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CATEGORY_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "TITLE",
+						"type": "varchar"
+					},
+					{
+						"name": "ACTOR",
+						"type": "varchar"
+					},
+					{
+						"name": "PRICE",
+						"type": "varchar"
+					},
+					{
+						"name": "SPECIAL",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "COMMON_PROD_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "QUAN_IN_STOCK",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SALES",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "START_DATE",
+						"type": "date"
+					},
+					{
+						"name": "END_DATE",
+						"type": "date"
+					},
+					{
+						"name": "CURRENT_RECORD_INDICATOR",
+						"type": "smallint",
+						"precision": 5
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Dim2Products"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/address_in')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputs_from_postgresqlDB"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "oltp_ds2",
+					"table": "address"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/categories_in')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputs_from_postgresqlDB"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "oltp_ds2",
+					"table": "categories"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/country_in')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputs_from_postgresqlDB"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "oltp_ds2",
+					"table": "country"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/credit_card_in')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputs_from_postgresqlDB"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "oltp_ds2",
+					"table": "credit_card"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customer_hist_in')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputs_from_postgresqlDB"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "oltp_ds2",
+					"table": "customer_hist"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customer_stag')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "ostagingstore"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_in')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customers_in')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputs_from_postgresqlDB"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "oltp_ds2",
+					"table": "customers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_fact_orderlines')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_input"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ORDER_LINE_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ORDER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CUSTOMER_KEY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRODUCT_KEY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "QUANTITY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ORDER_DATE",
+						"type": "date"
+					},
+					{
+						"name": "NET_AMOUNT",
+						"type": "varchar"
+					},
+					{
+						"name": "TAX_MONEY",
+						"type": "varchar"
+					},
+					{
+						"name": "TOTAL_AMOUNT",
+						"type": "varchar"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "fact_order_lines"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Inventory_sql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PROD_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "QUAN_IN_STOCK",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SALES",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "inventory"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_address')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "address.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "String"
+					},
+					{
+						"name": "ADDRESS1",
+						"type": "String"
+					},
+					{
+						"name": "ADDRESS2",
+						"type": "String"
+					},
+					{
+						"name": "CITY",
+						"type": "String"
+					},
+					{
+						"name": "STATE",
+						"type": "String"
+					},
+					{
+						"name": "COUNTRY_CODE",
+						"type": "String"
+					},
+					{
+						"name": "ZIP",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_in')]"
+			]
+		}
+	]
+}

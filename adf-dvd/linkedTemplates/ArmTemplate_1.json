@@ -1,0 +1,1330 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-dvd"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_categories')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "categories.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CATEGORY_ID",
+						"type": "String"
+					},
+					{
+						"name": "CATEGORY_NAME",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_categories_dql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CATEGORY_ID",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "CATEGORY_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "categories"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_country')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "country.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "COUNTRY_CODE",
+						"type": "String"
+					},
+					{
+						"name": "COUNTRY_NAME",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_countryAzure')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_forINPUTDB",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "COUNTRY_CODE",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "COUNTRY_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "country"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_credit_card')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "credit_card.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "String"
+					},
+					{
+						"name": "CREDIT_CARD_TYPE",
+						"type": "String"
+					},
+					{
+						"name": "CREDIT_CARD_NUMBER",
+						"type": "String"
+					},
+					{
+						"name": "CREDIT_CARD_EXPIRATION",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_cus_test')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_cus_test_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "fol_test"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "INPUT01.csv",
+						"container": "inputfortest"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "String"
+					},
+					{
+						"name": "FIRST_NAME",
+						"type": "String"
+					},
+					{
+						"name": "LAST_NAME",
+						"type": "String"
+					},
+					{
+						"name": "ADDRESS1",
+						"type": "String"
+					},
+					{
+						"name": "ADDRESS2",
+						"type": "String"
+					},
+					{
+						"name": "CITY",
+						"type": "String"
+					},
+					{
+						"name": "STATE",
+						"type": "String"
+					},
+					{
+						"name": "ZIP",
+						"type": "String"
+					},
+					{
+						"name": "COUNTRY_NAME",
+						"type": "String"
+					},
+					{
+						"name": "REGION",
+						"type": "String"
+					},
+					{
+						"name": "EMAIL",
+						"type": "String"
+					},
+					{
+						"name": "PHONE",
+						"type": "String"
+					},
+					{
+						"name": "CREDIT_CARD_TYPE",
+						"type": "String"
+					},
+					{
+						"name": "CREDIT_CARD_NUMBER",
+						"type": "String"
+					},
+					{
+						"name": "CREDIT_CARD_EXPIRATION",
+						"type": "String"
+					},
+					{
+						"name": "USER_NAME",
+						"type": "String"
+					},
+					{
+						"name": "PASSWORD",
+						"type": "String"
+					},
+					{
+						"name": "DATE_OF_BIRTH",
+						"type": "String"
+					},
+					{
+						"name": "INCOME",
+						"type": "String"
+					},
+					{
+						"name": "GENDER",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_customerDBAzure')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_forINPUTDB",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FIRST_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "LAST_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "REGION",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "EMAIL",
+						"type": "varchar"
+					},
+					{
+						"name": "PHONE",
+						"type": "varchar"
+					},
+					{
+						"name": "DATE_OF_BIRTH",
+						"type": "date"
+					},
+					{
+						"name": "INCOME",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "GENDER",
+						"type": "varchar"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "customers"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_customer_hist')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "customer_hist.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "String"
+					},
+					{
+						"name": "ORDER_ID",
+						"type": "String"
+					},
+					{
+						"name": "PROD_ID",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_customers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "customers.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "String"
+					},
+					{
+						"name": "FIRST_NAME",
+						"type": "String"
+					},
+					{
+						"name": "LAST_NAME",
+						"type": "String"
+					},
+					{
+						"name": "REGION",
+						"type": "String"
+					},
+					{
+						"name": "EMAIL",
+						"type": "String"
+					},
+					{
+						"name": "PHONE",
+						"type": "String"
+					},
+					{
+						"name": "DATE_OF_BIRTH",
+						"type": "String"
+					},
+					{
+						"name": "INCOME",
+						"type": "String"
+					},
+					{
+						"name": "GENDER",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_fact_reorder_sql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_input"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "REORDER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PRODUCT_KEY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DATE_LOW",
+						"type": "date"
+					},
+					{
+						"name": "QUAN_LOW",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DATE_REORDERED",
+						"type": "date"
+					},
+					{
+						"name": "QUAN_REORDERED",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DATE_EXPECTED",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "fact_reorder"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_inventory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "inventory.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PROD_ID",
+						"type": "String"
+					},
+					{
+						"name": "QUAN_IN_STOCK",
+						"type": "String"
+					},
+					{
+						"name": "SALES",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_login_information')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "login_information.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "String"
+					},
+					{
+						"name": "USER_NAME",
+						"type": "String"
+					},
+					{
+						"name": "PASSWORD",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_login_informationAzure')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_forINPUTDB",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CUSTOMER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "USER_NAME",
+						"type": "varchar"
+					},
+					{
+						"name": "PASSWORD",
+						"type": "varchar"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "login_information"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_order_lines')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "order_lines.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ORDER_LINE_ID",
+						"type": "String"
+					},
+					{
+						"name": "ORDER_ID",
+						"type": "String"
+					},
+					{
+						"name": "PROD_ID",
+						"type": "String"
+					},
+					{
+						"name": "QUANTITY",
+						"type": "String"
+					},
+					{
+						"name": "ORDER_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_orderlines_sql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ORDER_LINE_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ORDER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PROD_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "QUANTITY",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ORDER_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "order_lines"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_orders')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "orders.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ORDER_ID",
+						"type": "String"
+					},
+					{
+						"name": "ORDER_DATE",
+						"type": "String"
+					},
+					{
+						"name": "CUSTOMER_ID",
+						"type": "String"
+					},
+					{
+						"name": "NET_AMOUNT",
+						"type": "String"
+					},
+					{
+						"name": "TAX_MONEY",
+						"type": "String"
+					},
+					{
+						"name": "TOTAL_AMOUNT",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_orders_sql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ORDER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ORDER_DATE",
+						"type": "date"
+					},
+					{
+						"name": "CUSTOMER_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "NET_AMOUNT",
+						"type": "varchar"
+					},
+					{
+						"name": "TAX_MONEY",
+						"type": "varchar"
+					},
+					{
+						"name": "TOTAL_AMOUNT",
+						"type": "varchar"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "orders"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_products')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_in",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "blob_input_data"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "products.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PROD_ID",
+						"type": "String"
+					},
+					{
+						"name": "CATEGORY_ID",
+						"type": "String"
+					},
+					{
+						"name": "TITLE",
+						"type": "String"
+					},
+					{
+						"name": "ACTOR",
+						"type": "String"
+					},
+					{
+						"name": "PRICE",
+						"type": "String"
+					},
+					{
+						"name": "SPECIAL",
+						"type": "String"
+					},
+					{
+						"name": "COMMON_PROD_ID",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_products_csvfile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_cus_test_in",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Productscsv.csv",
+						"container": "vulnerability-assessment"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PRODUCT_ID",
+						"type": "String"
+					},
+					{
+						"name": "CATEGORY_ID",
+						"type": "String"
+					},
+					{
+						"name": "CATEGORY_NAME",
+						"type": "String"
+					},
+					{
+						"name": "TITLE",
+						"type": "String"
+					},
+					{
+						"name": "ACTOR",
+						"type": "String"
+					},
+					{
+						"name": "PRICE",
+						"type": "String"
+					},
+					{
+						"name": "SPECIAL",
+						"type": "String"
+					},
+					{
+						"name": "COMMON_PROD_ID",
+						"type": "String"
+					},
+					{
+						"name": "QUAN_IN_STOCK",
+						"type": "String"
+					},
+					{
+						"name": "SALES",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "String"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "String"
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_products_sql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "inputsforOLTP"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PROD_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CATEGORY_ID",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "TITLE",
+						"type": "varchar"
+					},
+					{
+						"name": "ACTOR",
+						"type": "varchar"
+					},
+					{
+						"name": "PRICE",
+						"type": "varchar"
+					},
+					{
+						"name": "SPECIAL",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "COMMON_PROD_ID",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ROW_INSERTED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_UPDATED_DATE",
+						"type": "date"
+					},
+					{
+						"name": "ROW_INSERTED_BY",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ROW_UPDATED_BY",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "products"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

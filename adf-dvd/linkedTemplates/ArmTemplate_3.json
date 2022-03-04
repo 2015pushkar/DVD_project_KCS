@@ -1,0 +1,487 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-dvd"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/df_fact_reorder_FnF')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_reorder_sql",
+								"type": "DatasetReference"
+							},
+							"name": "REORDER"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_o_DIM2",
+								"type": "DatasetReference"
+							},
+							"name": "DIMProducts"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_fact_reorder_sql",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CRI1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "select2"
+						}
+					],
+					"script": "source(output(\n\t\tPROD_ID as integer,\n\t\tREORDER_ID as integer,\n\t\tDATE_LOW as date,\n\t\tDATE_REORDERED as date,\n\t\tQUAN_LOW as integer,\n\t\tQUAN_REORDERED as integer,\n\t\tDATE_EXPECTED as date,\n\t\tROW_INSERTED_DATE as date,\n\t\tROW_UPDATED_DATE as date,\n\t\tROW_INSERTED_BY as integer,\n\t\tROW_UPDATED_BY as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> REORDER\nsource(output(\n\t\tS_KEY as integer,\n\t\tPRODUCT_ID as integer,\n\t\tCATEGORY_ID as integer,\n\t\tCATEGORY_NAME as string,\n\t\tTITLE as string,\n\t\tACTOR as string,\n\t\tPRICE as string,\n\t\tSPECIAL as integer,\n\t\tCOMMON_PROD_ID as integer,\n\t\tQUAN_IN_STOCK as integer,\n\t\tSALES as integer,\n\t\tROW_INSERTED_DATE as date,\n\t\tROW_UPDATED_DATE as date,\n\t\tROW_INSERTED_BY as integer,\n\t\tROW_UPDATED_BY as integer,\n\t\tSTART_DATE as date,\n\t\tEND_DATE as date,\n\t\tCURRENT_RECORD_INDICATOR as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> DIMProducts\nDIMProducts filter(CURRENT_RECORD_INDICATOR==1) ~> CRI1\nCRI1 select(mapColumn(\n\t\tPRODUCT_KEY = S_KEY,\n\t\tPRODUCT_ID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> select1\nREORDER, select1 join(PROD_ID == PRODUCT_ID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> join1\njoin1 select(mapColumn(\n\t\tREORDER_ID,\n\t\tPRODUCT_KEY,\n\t\tDATE_LOW,\n\t\tQUAN_LOW,\n\t\tDATE_REORDERED,\n\t\tQUAN_REORDERED,\n\t\tDATE_EXPECTED,\n\t\tROW_INSERTED_DATE,\n\t\tROW_INSERTED_BY\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> select2\nselect2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tREORDER_ID as integer,\n\t\tPRODUCT_KEY as integer,\n\t\tDATE_LOW as date,\n\t\tQUAN_LOW as integer,\n\t\tDATE_REORDERED as date,\n\t\tQUAN_REORDERED as integer,\n\t\tDATE_EXPECTED as date,\n\t\tROW_INSERTED_BY as integer,\n\t\tROW_INSERTED_DATE as date\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tREORDER_ID,\n\t\tPRODUCT_KEY,\n\t\tDATE_LOW,\n\t\tQUAN_LOW,\n\t\tDATE_REORDERED,\n\t\tQUAN_REORDERED,\n\t\tDATE_EXPECTED,\n\t\tROW_INSERTED_DATE,\n\t\tROW_INSERTED_BY\n\t)) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pL_JOIN_Products')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "JOINProducts",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Products": {},
+									"categories": {},
+									"Inventory": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-03-01T04:39:53Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_DIMCUSTOMERS_Type2_SCD",
+								"type": "DataFlowReference",
+								"parameters": {
+									"COLUMNS": "'FIRST_NAME,LAST_NAME,ADDRESS1,ADDRESS2,CITY,STATE,EMAIL,CREDIT_CARD_EXPIRATION,USER_NAME,PASSWORD,GENDER'"
+								},
+								"datasetParameters": {
+									"cusin": {},
+									"ExistingTarget": {},
+									"Targetforcomparison": {},
+									"StartDateUpdatesource": {},
+									"InsertNEWRECORD": {},
+									"UPDATEOLDRECORD": {},
+									"OLDRECORDCRI0": {},
+									"EndDatetobeFetchedagain": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-03-03T15:38:19Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_JOIN_CUSTOMERS')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "JOINcustomers",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"customers": {},
+									"LoginInformation": {},
+									"Country": {},
+									"Address": {},
+									"CreditCard": {},
+									"sinkdatefortype2customer": {},
+									"InsertNewCol": {},
+									"UpdateSink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-03-01T04:39:53Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_change_date')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_DIMCUSTOMERS_Type2_SCD",
+								"type": "DataFlowReference",
+								"parameters": {
+									"COLUMNS": "'FIRST_NAME,LAST_NAME,ADDRESS1,ADDRESS2,CITY,STATE,EMAIL,CREDIT_CARD_EXPIRATION,USER_NAME,PASSWORD,GENDER'"
+								},
+								"datasetParameters": {
+									"cusin": {},
+									"ExistingTarget": {},
+									"Targetforcomparison": {},
+									"StartDateUpdatesource": {},
+									"InsertNEWRECORD": {},
+									"UPDATEOLDRECORD": {},
+									"OLDRECORDCRI0": {},
+									"EndDatetobeFetchedagain": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-02-25T11:23:31Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_df_fact_orderlines_FnF')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_fact_orderlines_FnF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"dimCustomers": {},
+									"orders": {},
+									"orderlines": {},
+									"DimProducts": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-03-04T05:59:38Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_df_fact_reorder_FnF')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_fact_reorder_FnF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"REORDER": {},
+									"DIMProducts": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-03-04T05:59:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_fact_reorder_FnF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_dm_customers_final_FnF')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "pl_dm_customers_final",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_DIMcustomer_FnF",
+								"type": "DataFlowReference",
+								"parameters": {
+									"COLUMNS": "'FIRST_NAME,LAST_NAME,ADDRESS1,ADDRESS2,CITY,STATE,EMAIL,CREDIT_CARD_EXPIRATION,USER_NAME,PASSWORD,GENDER'"
+								},
+								"datasetParameters": {
+									"ExistingTarget": {},
+									"Targetforcomparison": {},
+									"StartDateUpdatesource": {},
+									"customers": {},
+									"LoginInformation": {},
+									"Country": {},
+									"Address": {},
+									"CreditCard": {},
+									"InsertNEWRECORD": {},
+									"UPDATEOLDRECORD": {},
+									"OLDRECORDCRI0": {},
+									"EndDatetobeFetchedagain": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-03-04T05:59:38Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_dm_products_final_FnF')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "pl_dm_products_final",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_DIMPRODUCTS_FnF",
+								"type": "DataFlowReference",
+								"parameters": {
+									"COLUMNS": "'CATEGORY_NAME,TITLE,ACTOR'"
+								},
+								"datasetParameters": {
+									"ExistingTarget": {},
+									"Targetforcomparison": {},
+									"StartDateUpdatesource": {},
+									"Products": {},
+									"Categories": {},
+									"Inventory": {},
+									"EndDatetobeFetchedagain": {},
+									"InsertNewRecord": {},
+									"OLDrecordCRI0": {},
+									"UpdateOldRecord": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-03-04T05:59:41Z"
+			},
+			"dependsOn": []
+		}
+	]
+}
