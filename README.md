@@ -2,7 +2,7 @@
 
 
 
-#PUBLIC USE Branch, But please do not PUBLISH it in Main Branch
+#PUBLIC USE Branch / Backup
 
 1. Pushkar Wani
 2. Arnav Kumar
