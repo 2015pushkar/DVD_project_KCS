@@ -1,0 +1,90 @@
+{
+	"name": "sql_dim_products",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_DB_SOURCE",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "sql_input"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "S_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CATEGORY_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CATEGORY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "TITLE",
+				"type": "varchar"
+			},
+			{
+				"name": "ACTOR",
+				"type": "varchar"
+			},
+			{
+				"name": "PRICE",
+				"type": "varchar"
+			},
+			{
+				"name": "SPECIAL",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "COMMON_PROD_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "QUAN_IN_STOCK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SALES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ROW_INSERTED_DATE",
+				"type": "date"
+			},
+			{
+				"name": "ROW_UPDATED_DATE",
+				"type": "date"
+			},
+			{
+				"name": "ROW_INSERTED_BY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ROW_UPDATED_BY",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dim_products"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

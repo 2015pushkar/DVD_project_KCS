@@ -1,0 +1,62 @@
+{
+	"name": "ds_fact_reorder_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_DB_SOURCE",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "sql_input"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "REORDER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DATE_LOW",
+				"type": "date"
+			},
+			{
+				"name": "QUAN_LOW",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DATE_REORDERED",
+				"type": "date"
+			},
+			{
+				"name": "QUAN_REORDERED",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DATE_EXPECTED",
+				"type": "date"
+			},
+			{
+				"name": "ROW_INSERTED_BY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ROW_INSERTED_DATE",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "fact_reorder"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

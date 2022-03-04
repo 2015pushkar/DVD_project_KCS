@@ -1,0 +1,37 @@
+{
+	"name": "pl_dm_customers_final_FnF",
+	"properties": {
+		"activities": [
+			{
+				"name": "pl_dm_customers_final",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_DIMcustomer_FnF",
+						"type": "DataFlowReference",
+						"parameters": {
+							"COLUMNS": "'FIRST_NAME,LAST_NAME,ADDRESS1,ADDRESS2,CITY,STATE,EMAIL,CREDIT_CARD_EXPIRATION,USER_NAME,PASSWORD,GENDER'"
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-03-04T05:59:38Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,65 @@
+{
+	"name": "ds_orders_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_DB_SOURCE",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "inputsforOLTP"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ORDER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ORDER_DATE",
+				"type": "date"
+			},
+			{
+				"name": "CUSTOMER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "NET_AMOUNT",
+				"type": "varchar"
+			},
+			{
+				"name": "TAX_MONEY",
+				"type": "varchar"
+			},
+			{
+				"name": "TOTAL_AMOUNT",
+				"type": "varchar"
+			},
+			{
+				"name": "ROW_INSERTED_DATE",
+				"type": "date"
+			},
+			{
+				"name": "ROW_UPDATED_DATE",
+				"type": "date"
+			},
+			{
+				"name": "ROW_INSERTED_BY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ROW_UPDATED_BY",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "orders"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

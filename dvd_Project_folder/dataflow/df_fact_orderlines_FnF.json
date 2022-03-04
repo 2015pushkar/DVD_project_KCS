@@ -1,0 +1,83 @@
+{
+	"name": "df_fact_orderlines_FnF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "sql_customers",
+						"type": "DatasetReference"
+					},
+					"name": "dimCustomers"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_orders_sql",
+						"type": "DatasetReference"
+					},
+					"name": "orders"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_orderlines_sql",
+						"type": "DatasetReference"
+					},
+					"name": "orderlines"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_o_DIM2",
+						"type": "DatasetReference"
+					},
+					"name": "DimProducts"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "df_fact_orderlines",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "selectORDERS"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "joinProductKey"
+				},
+				{
+					"name": "CRI1Customer"
+				},
+				{
+					"name": "CRI1Products"
+				},
+				{
+					"name": "selectProductkey"
+				},
+				{
+					"name": "selectCustomerkey"
+				},
+				{
+					"name": "selectProductkeymain"
+				},
+				{
+					"name": "joinCustomerkey"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"script": "source(output(\n\t\tS_KEY as integer,\n\t\tCUSTOMER_ID as integer,\n\t\tFIRST_NAME as string,\n\t\tLAST_NAME as string,\n\t\tADDRESS1 as string,\n\t\tADDRESS2 as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tZIP as integer,\n\t\tCOUNTRY as string,\n\t\tREGION as integer,\n\t\tEMAIL as string,\n\t\tPHONE as string,\n\t\tCREDIT_CARD_TYPE as integer,\n\t\tCREDIT_CARD_NUMBER as string,\n\t\tCREDIT_CARD_EXPIRATION as string,\n\t\tUSER_NAME as string,\n\t\tPASSWORD as string,\n\t\tDATE_OF_BIRTH as date,\n\t\tINCOME as integer,\n\t\tGENDER as string,\n\t\tROW_INSERTED_DATE as date,\n\t\tROW_UPDATED_DATE as date,\n\t\tROW_INSERTED_BY as integer,\n\t\tROW_UPDATED_BY as integer,\n\t\tSTART_DATE as date,\n\t\tEND_DATE as date,\n\t\tCURRENT_RECORD_INDICATOR as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> dimCustomers\nsource(output(\n\t\tORDER_ID as integer,\n\t\tORDER_DATE as date,\n\t\tCUSTOMER_ID as integer,\n\t\tNET_AMOUNT as string,\n\t\tTAX_MONEY as string,\n\t\tTOTAL_AMOUNT as string,\n\t\tROW_INSERTED_DATE as date,\n\t\tROW_UPDATED_DATE as date,\n\t\tROW_INSERTED_BY as integer,\n\t\tROW_UPDATED_BY as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> orders\nsource(output(\n\t\tORDER_LINE_ID as integer,\n\t\tORDER_ID as integer,\n\t\tPROD_ID as integer,\n\t\tQUANTITY as integer,\n\t\tORDER_DATE as date,\n\t\tROW_INSERTED_DATE as date,\n\t\tROW_UPDATED_DATE as date,\n\t\tROW_INSERTED_BY as integer,\n\t\tROW_UPDATED_BY as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> orderlines\nsource(output(\n\t\tS_KEY as integer,\n\t\tPRODUCT_ID as integer,\n\t\tCATEGORY_ID as integer,\n\t\tCATEGORY_NAME as string,\n\t\tTITLE as string,\n\t\tACTOR as string,\n\t\tPRICE as string,\n\t\tSPECIAL as integer,\n\t\tCOMMON_PROD_ID as integer,\n\t\tQUAN_IN_STOCK as integer,\n\t\tSALES as integer,\n\t\tROW_INSERTED_DATE as date,\n\t\tROW_UPDATED_DATE as date,\n\t\tROW_INSERTED_BY as integer,\n\t\tROW_UPDATED_BY as integer,\n\t\tSTART_DATE as date,\n\t\tEND_DATE as date,\n\t\tCURRENT_RECORD_INDICATOR as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> DimProducts\norders select(mapColumn(\n\t\tORDER_ID,\n\t\tORDER_DATE,\n\t\tCUSTOMER_ID,\n\t\tNET_AMOUNT,\n\t\tTAX_MONEY,\n\t\tTOTAL_AMOUNT,\n\t\tROW_INSERTED_DATE,\n\t\tROW_UPDATED_DATE,\n\t\tROW_INSERTED_BY,\n\t\tROW_UPDATED_BY\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectORDERS\norderlines, selectORDERS join(orderlines@ORDER_ID == selectORDERS@ORDER_ID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> join1\njoin1 select(mapColumn(\n\t\tORDER_LINE_ID,\n\t\tORDER_ID = orderlines@ORDER_ID,\n\t\tPROD_ID,\n\t\tCUSTOMER_ID,\n\t\tQUANTITY,\n\t\tORDER_DATE = orderlines@ORDER_DATE,\n\t\tNET_AMOUNT,\n\t\tTAX_MONEY,\n\t\tTOTAL_AMOUNT,\n\t\tROW_INSERTED_DATE = orderlines@ROW_INSERTED_DATE,\n\t\tROW_INSERTED_BY = orderlines@ROW_INSERTED_BY\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> select1\nselect1, selectProductkey join(PROD_ID == PRODUCT_ID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> joinProductKey\ndimCustomers filter(CURRENT_RECORD_INDICATOR==1) ~> CRI1Customer\nDimProducts filter(CURRENT_RECORD_INDICATOR==1) ~> CRI1Products\nCRI1Products select(mapColumn(\n\t\tPRODUCT_KEY = S_KEY,\n\t\tPRODUCT_ID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectProductkey\nCRI1Customer select(mapColumn(\n\t\tCUSTOMER_KEY = S_KEY,\n\t\tCUSTOMER_ID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectCustomerkey\njoinProductKey select(mapColumn(\n\t\tORDER_LINE_ID,\n\t\tORDER_ID,\n\t\tCUSTOMER_ID,\n\t\tQUANTITY,\n\t\tORDER_DATE,\n\t\tNET_AMOUNT,\n\t\tTAX_MONEY,\n\t\tTOTAL_AMOUNT,\n\t\tROW_INSERTED_DATE,\n\t\tROW_INSERTED_BY,\n\t\tPRODUCT_KEY\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectProductkeymain\nselectProductkeymain, selectCustomerkey join(selectProductkeymain@CUSTOMER_ID == selectCustomerkey@CUSTOMER_ID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> joinCustomerkey\njoinCustomerkey select(mapColumn(\n\t\tORDER_LINE_ID,\n\t\tORDER_ID,\n\t\tCUSTOMER_KEY,\n\t\tPRODUCT_KEY,\n\t\tQUANTITY,\n\t\tORDER_DATE,\n\t\tNET_AMOUNT,\n\t\tTAX_MONEY,\n\t\tTOTAL_AMOUNT,\n\t\tROW_INSERTED_DATE,\n\t\tROW_INSERTED_BY\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> select2\nselect2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tORDER_LINE_ID as integer,\n\t\tORDER_ID as integer,\n\t\tCUSTOMER_KEY as integer,\n\t\tPRODUCT_KEY as integer,\n\t\tQUANTITY as integer,\n\t\tORDER_DATE as date,\n\t\tNET_AMOUNT as string,\n\t\tTAX_MONEY as string,\n\t\tTOTAL_AMOUNT as string,\n\t\tROW_INSERTED_DATE as date,\n\t\tROW_INSERTED_BY as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tORDER_LINE_ID,\n\t\tORDER_ID,\n\t\tCUSTOMER_KEY,\n\t\tPRODUCT_KEY,\n\t\tQUANTITY,\n\t\tORDER_DATE,\n\t\tNET_AMOUNT,\n\t\tTAX_MONEY,\n\t\tTOTAL_AMOUNT,\n\t\tROW_INSERTED_DATE,\n\t\tROW_INSERTED_BY\n\t)) ~> sink1"
+		}
+	}
+}
