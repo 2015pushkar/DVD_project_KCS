@@ -1,1 +1,4 @@
-# DVD_project_KCS
+# DVD_project
+
+-- Pushkar Wani
+-- Arnav Kumar
