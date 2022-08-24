@@ -1,8 +1,8 @@
 {
-	"name": "ds_customerDBAzure",
+	"name": "ds_customer_sql",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_forINPUTDB",
+			"referenceName": "sql_DB_SOURCE",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {

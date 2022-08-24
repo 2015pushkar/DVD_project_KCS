@@ -1,5 +1,5 @@
 {
-	"name": "ds_login_information_sql",
+	"name": "ds_address_sql",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "sql_DB_SOURCE",
@@ -17,12 +17,30 @@
 				"precision": 10
 			},
 			{
-				"name": "USER_NAME",
+				"name": "ADDRESS1",
 				"type": "varchar"
 			},
 			{
-				"name": "PASSWORD",
+				"name": "ADDRESS2",
 				"type": "varchar"
+			},
+			{
+				"name": "CITY",
+				"type": "varchar"
+			},
+			{
+				"name": "STATE",
+				"type": "varchar"
+			},
+			{
+				"name": "COUNTRY_CODE",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "ZIP",
+				"type": "int",
+				"precision": 10
 			},
 			{
 				"name": "ROW_INSERTED_DATE",
@@ -45,8 +63,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "login_information"
+			"table": "address"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

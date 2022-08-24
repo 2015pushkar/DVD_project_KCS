@@ -1,5 +1,5 @@
 {
-	"name": "ds_categories_sql",
+	"name": "ds_credit_card_sql",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "sql_DB_SOURCE",
@@ -12,12 +12,21 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "CATEGORY_ID",
+				"name": "CUSTOMER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CREDIT_CARD_TYPE",
 				"type": "smallint",
 				"precision": 5
 			},
 			{
-				"name": "CATEGORY_NAME",
+				"name": "CREDIT_CARD_NUMBER",
+				"type": "varchar"
+			},
+			{
+				"name": "CREDIT_CARD_EXPIRATION",
 				"type": "varchar"
 			},
 			{
@@ -25,15 +34,23 @@
 				"type": "date"
 			},
 			{
+				"name": "ROW_UPDATED_DATE",
+				"type": "date"
+			},
+			{
 				"name": "ROW_INSERTED_BY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ROW_UPDATED_BY",
 				"type": "int",
 				"precision": 10
 			}
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "categories"
+			"table": "credit_card"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

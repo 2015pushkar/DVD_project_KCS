@@ -1,5 +1,5 @@
 {
-	"name": "copy",
+	"name": "copyData_postgresql_to_srcDB_dvd",
 	"properties": {
 		"activities": [
 			{
