@@ -135,7 +135,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "dim"
+			"table": "dim_customers"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
