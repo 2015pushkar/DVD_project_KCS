@@ -1,103 +1,99 @@
 {
-	"name": "SQL_o_DIM2",
+	"name": "ds_Dim_Products_csv",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "sql_DB_SOURCE",
+			"referenceName": "AzureBlobStorage_in",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "sql_input"
+			"name": "fol_test"
 		},
 		"annotations": [],
-		"type": "AzureSqlTable",
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Dim_Products.csv",
+				"container": "inputfortest"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
 		"schema": [
 			{
 				"name": "S_KEY",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "PRODUCT_ID",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "CATEGORY_ID",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "CATEGORY_NAME",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "TITLE",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "ACTOR",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "PRICE",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "SPECIAL",
-				"type": "smallint",
-				"precision": 5
+				"type": "String"
 			},
 			{
 				"name": "COMMON_PROD_ID",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "QUAN_IN_STOCK",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "SALES",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "ROW_INSERTED_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "ROW_UPDATED_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "ROW_INSERTED_BY",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "ROW_UPDATED_BY",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "START_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "END_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "CURRENT_RECORD_INDICATOR",
-				"type": "smallint",
-				"precision": 5
+				"type": "String"
 			}
-		],
-		"typeProperties": {
-			"schema": "dbo",
-			"table": "dim_products"
-		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+		]
+	}
 }

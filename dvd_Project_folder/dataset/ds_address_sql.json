@@ -1,64 +1,44 @@
 {
-	"name": "SQL_o_DIM2",
+	"name": "ds_address_sql",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "sql_DB_SOURCE",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "sql_input"
+			"name": "inputsforOLTP"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "S_KEY",
+				"name": "CUSTOMER_ID",
 				"type": "int",
 				"precision": 10
 			},
 			{
-				"name": "PRODUCT_ID",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "CATEGORY_ID",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "CATEGORY_NAME",
+				"name": "ADDRESS1",
 				"type": "varchar"
 			},
 			{
-				"name": "TITLE",
+				"name": "ADDRESS2",
 				"type": "varchar"
 			},
 			{
-				"name": "ACTOR",
+				"name": "CITY",
 				"type": "varchar"
 			},
 			{
-				"name": "PRICE",
+				"name": "STATE",
 				"type": "varchar"
 			},
 			{
-				"name": "SPECIAL",
+				"name": "COUNTRY_CODE",
 				"type": "smallint",
 				"precision": 5
 			},
 			{
-				"name": "COMMON_PROD_ID",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "QUAN_IN_STOCK",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "SALES",
+				"name": "ZIP",
 				"type": "int",
 				"precision": 10
 			},
@@ -79,25 +59,11 @@
 				"name": "ROW_UPDATED_BY",
 				"type": "int",
 				"precision": 10
-			},
-			{
-				"name": "START_DATE",
-				"type": "date"
-			},
-			{
-				"name": "END_DATE",
-				"type": "date"
-			},
-			{
-				"name": "CURRENT_RECORD_INDICATOR",
-				"type": "smallint",
-				"precision": 5
 			}
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "dim_products"
+			"table": "address"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

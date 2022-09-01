@@ -1,8 +1,8 @@
 {
-	"name": "ds_login_informationAzure",
+	"name": "ds_credit_card_sql",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_forINPUTDB",
+			"referenceName": "sql_DB_SOURCE",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -17,11 +17,16 @@
 				"precision": 10
 			},
 			{
-				"name": "USER_NAME",
+				"name": "CREDIT_CARD_TYPE",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "CREDIT_CARD_NUMBER",
 				"type": "varchar"
 			},
 			{
-				"name": "PASSWORD",
+				"name": "CREDIT_CARD_EXPIRATION",
 				"type": "varchar"
 			},
 			{
@@ -45,8 +50,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "login_information"
+			"table": "credit_card"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

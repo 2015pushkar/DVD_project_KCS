@@ -22,6 +22,11 @@
 				"precision": 10
 			},
 			{
+				"name": "PRODUCT_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
 				"name": "DATE_LOW",
 				"type": "date"
 			},

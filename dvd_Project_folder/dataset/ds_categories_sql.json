@@ -1,8 +1,8 @@
 {
-	"name": "ds_countryAzure",
+	"name": "ds_categories_sql",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_forINPUTDB",
+			"referenceName": "sql_DB_SOURCE",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -12,12 +12,12 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "COUNTRY_CODE",
-				"type": "int",
-				"precision": 10
+				"name": "CATEGORY_ID",
+				"type": "smallint",
+				"precision": 5
 			},
 			{
-				"name": "COUNTRY_NAME",
+				"name": "CATEGORY_NAME",
 				"type": "varchar"
 			},
 			{
@@ -32,7 +32,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "country"
+			"table": "categories"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"

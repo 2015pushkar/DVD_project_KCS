@@ -1,66 +1,54 @@
 {
-	"name": "SQL_o_DIM2",
+	"name": "ds_customer_sql",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "sql_DB_SOURCE",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "sql_input"
+			"name": "inputsforOLTP"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "S_KEY",
+				"name": "CUSTOMER_ID",
 				"type": "int",
 				"precision": 10
 			},
 			{
-				"name": "PRODUCT_ID",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "CATEGORY_ID",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "CATEGORY_NAME",
+				"name": "FIRST_NAME",
 				"type": "varchar"
 			},
 			{
-				"name": "TITLE",
+				"name": "LAST_NAME",
 				"type": "varchar"
 			},
 			{
-				"name": "ACTOR",
-				"type": "varchar"
-			},
-			{
-				"name": "PRICE",
-				"type": "varchar"
-			},
-			{
-				"name": "SPECIAL",
+				"name": "REGION",
 				"type": "smallint",
 				"precision": 5
 			},
 			{
-				"name": "COMMON_PROD_ID",
+				"name": "EMAIL",
+				"type": "varchar"
+			},
+			{
+				"name": "PHONE",
+				"type": "varchar"
+			},
+			{
+				"name": "DATE_OF_BIRTH",
+				"type": "date"
+			},
+			{
+				"name": "INCOME",
 				"type": "int",
 				"precision": 10
 			},
 			{
-				"name": "QUAN_IN_STOCK",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "SALES",
-				"type": "int",
-				"precision": 10
+				"name": "GENDER",
+				"type": "varchar"
 			},
 			{
 				"name": "ROW_INSERTED_DATE",
@@ -79,24 +67,11 @@
 				"name": "ROW_UPDATED_BY",
 				"type": "int",
 				"precision": 10
-			},
-			{
-				"name": "START_DATE",
-				"type": "date"
-			},
-			{
-				"name": "END_DATE",
-				"type": "date"
-			},
-			{
-				"name": "CURRENT_RECORD_INDICATOR",
-				"type": "smallint",
-				"precision": 5
 			}
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "dim_products"
+			"table": "customers"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"

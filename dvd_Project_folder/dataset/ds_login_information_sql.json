@@ -1,8 +1,8 @@
 {
-	"name": "ds_customerDBAzure",
+	"name": "ds_login_information_sql",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_forINPUTDB",
+			"referenceName": "sql_DB_SOURCE",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -17,37 +17,11 @@
 				"precision": 10
 			},
 			{
-				"name": "FIRST_NAME",
+				"name": "USER_NAME",
 				"type": "varchar"
 			},
 			{
-				"name": "LAST_NAME",
-				"type": "varchar"
-			},
-			{
-				"name": "REGION",
-				"type": "smallint",
-				"precision": 5
-			},
-			{
-				"name": "EMAIL",
-				"type": "varchar"
-			},
-			{
-				"name": "PHONE",
-				"type": "varchar"
-			},
-			{
-				"name": "DATE_OF_BIRTH",
-				"type": "date"
-			},
-			{
-				"name": "INCOME",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "GENDER",
+				"name": "PASSWORD",
 				"type": "varchar"
 			},
 			{
@@ -71,7 +45,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "customers"
+			"table": "login_information"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"

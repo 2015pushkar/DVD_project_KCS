@@ -1,142 +1,139 @@
 {
-	"name": "sql_customers",
+	"name": "ds_Dim_customers_csv",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "sql_DB_SOURCE",
+			"referenceName": "AzureBlobStorage_in",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "sql_input"
+			"name": "fol_test"
 		},
 		"annotations": [],
-		"type": "AzureSqlTable",
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Dim_customers.csv",
+				"container": "inputfortest"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
 		"schema": [
 			{
 				"name": "S_KEY",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "CUSTOMER_ID",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "FIRST_NAME",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "LAST_NAME",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "ADDRESS1",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "ADDRESS2",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "CITY",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "STATE",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "ZIP",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "COUNTRY",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "REGION",
-				"type": "smallint",
-				"precision": 5
+				"type": "String"
 			},
 			{
 				"name": "EMAIL",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "PHONE",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "CREDIT_CARD_TYPE",
-				"type": "smallint",
-				"precision": 5
+				"type": "String"
 			},
 			{
 				"name": "CREDIT_CARD_NUMBER",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "CREDIT_CARD_EXPIRATION",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "USER_NAME",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "PASSWORD",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "DATE_OF_BIRTH",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "INCOME",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "GENDER",
-				"type": "varchar"
+				"type": "String"
 			},
 			{
 				"name": "ROW_INSERTED_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "ROW_UPDATED_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "ROW_INSERTED_BY",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "ROW_UPDATED_BY",
-				"type": "int",
-				"precision": 10
+				"type": "String"
 			},
 			{
 				"name": "START_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "END_DATE",
-				"type": "date"
+				"type": "String"
 			},
 			{
 				"name": "CURRENT_RECORD_INDICATOR",
-				"type": "smallint",
-				"precision": 5
+				"type": "String"
 			}
-		],
-		"typeProperties": {
-			"schema": "dbo",
-			"table": "dim_customers"
-		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+		]
+	}
 }
