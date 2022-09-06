@@ -1,0 +1,75 @@
+{
+	"name": "ds_fact_order_lines_power_query",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_DB_SOURCE",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ORDER_LINE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ORDER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUSTOMER_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "QUANTITY",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "ORDER_DATE",
+				"type": "date"
+			},
+			{
+				"name": "NET_AMOUNT",
+				"type": "varchar"
+			},
+			{
+				"name": "TAX_MONEY",
+				"type": "varchar"
+			},
+			{
+				"name": "TOTAL_AMOUNT",
+				"type": "varchar"
+			},
+			{
+				"name": "ROW_INSERTED_DATE",
+				"type": "date"
+			},
+			{
+				"name": "ROW_INSERTED_BY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_PRICE",
+				"type": "varchar"
+			},
+			{
+				"name": "TOTAL SALES",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "fact_order_lines_power_query"
+		}
+	}
+}
