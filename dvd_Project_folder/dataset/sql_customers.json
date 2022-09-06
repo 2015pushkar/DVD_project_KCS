@@ -102,6 +102,15 @@
 				"type": "varchar"
 			},
 			{
+				"name": "AGE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AGE_BUCKETS",
+				"type": "varchar"
+			},
+			{
 				"name": "ROW_INSERTED_DATE",
 				"type": "date"
 			},
