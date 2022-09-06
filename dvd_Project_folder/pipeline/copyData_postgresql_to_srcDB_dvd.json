@@ -35,13 +35,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "customers_in",
+						"referenceName": "products_in",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_customer_sql",
+						"referenceName": "ds_products_sql",
 						"type": "DatasetReference"
 					}
 				]
