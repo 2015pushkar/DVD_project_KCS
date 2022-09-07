@@ -39,7 +39,8 @@
 			},
 			{
 				"name": "PRICE",
-				"type": "varchar"
+				"type": "int",
+				"precision": 10
 			},
 			{
 				"name": "NET_AMOUNT",
@@ -64,6 +65,11 @@
 			},
 			{
 				"name": "TOTAL SALES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRICE_BUCKETS",
 				"type": "varchar"
 			}
 		],
