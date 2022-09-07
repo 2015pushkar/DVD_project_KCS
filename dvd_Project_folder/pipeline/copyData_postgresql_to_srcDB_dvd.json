@@ -21,7 +21,8 @@
 					"sink": {
 						"type": "AzureSqlSink",
 						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
+						"sqlWriterUseTableLock": true,
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
 					"translator": {
@@ -35,13 +36,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "products_in",
+						"referenceName": "address_in",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_products_sql",
+						"referenceName": "ds_address_sql",
 						"type": "DatasetReference"
 					}
 				]
