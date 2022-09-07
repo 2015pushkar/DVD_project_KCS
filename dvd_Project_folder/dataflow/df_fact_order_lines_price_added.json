@@ -1,0 +1,172 @@
+{
+	"name": "df_fact_order_lines_price_added",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "df_fact_orderlines",
+						"type": "DatasetReference"
+					},
+					"name": "factorderlines"
+				},
+				{
+					"dataset": {
+						"referenceName": "sql_dim_products",
+						"type": "DatasetReference"
+					},
+					"name": "dimproducts"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_fact_order_lines_price",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ORDER_LINE_ID as integer,",
+				"          ORDER_ID as integer,",
+				"          CUSTOMER_KEY as integer,",
+				"          PRODUCT_KEY as integer,",
+				"          QUANTITY as integer,",
+				"          ORDER_DATE as date,",
+				"          NET_AMOUNT as string,",
+				"          TAX_MONEY as string,",
+				"          TOTAL_AMOUNT as string,",
+				"          ROW_INSERTED_DATE as date,",
+				"          ROW_INSERTED_BY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> factorderlines",
+				"source(output(",
+				"          S_KEY as integer,",
+				"          PRODUCT_ID as integer,",
+				"          CATEGORY_ID as integer,",
+				"          CATEGORY_NAME as string,",
+				"          TITLE as string,",
+				"          ACTOR as string,",
+				"          PRICE as string,",
+				"          SPECIAL as integer,",
+				"          COMMON_PROD_ID as integer,",
+				"          QUAN_IN_STOCK as integer,",
+				"          SALES as integer,",
+				"          ROW_INSERTED_DATE as date,",
+				"          ROW_UPDATED_DATE as date,",
+				"          ROW_INSERTED_BY as integer,",
+				"          ROW_UPDATED_BY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimproducts",
+				"factorderlines, dimproducts join(PRODUCT_KEY == S_KEY,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          ORDER_LINE_ID,",
+				"          ORDER_ID,",
+				"          CUSTOMER_KEY,",
+				"          PRODUCT_KEY,",
+				"          QUANTITY,",
+				"          ORDER_DATE,",
+				"          NET_AMOUNT,",
+				"          TAX_MONEY,",
+				"          TOTAL_AMOUNT,",
+				"          ROW_INSERTED_DATE = factorderlines@ROW_INSERTED_DATE,",
+				"          ROW_INSERTED_BY = factorderlines@ROW_INSERTED_BY,",
+				"          CATEGORY_NAME,",
+				"          TITLE,",
+				"          ACTOR,",
+				"          PRICE,",
+				"          QUAN_IN_STOCK,",
+				"          SALES",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(PRICE = round(toFloat(split(PRICE,'$')[2]),2)) ~> derivedColumn1",
+				"derivedColumn1 derive(TOTAL_SALES = round(PRICE*QUANTITY,2)) ~> derivedColumn2",
+				"derivedColumn2 derive(PRICE_BUCKETS = /* case(AGE>=17 && AGE<=30, '17-30', AGE>=31 && AGE<=45,'31-45',AGE>=46 && AGE<=60,'46-60',AGE>=61 && AGE<=75,'61-75',AGE>=76 && AGE<=90,'76-90') */\r",
+				"case(PRICE<=10, '0-10', PRICE>10 && PRICE<=15,'10-15',PRICE>15 && PRICE<=20,'15-20',PRICE>20 && PRICE<=25,'20-25',PRICE>25 && PRICE<=30,'25-30')) ~> derivedColumn3",
+				"derivedColumn3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ORDER_LINE_ID as integer,",
+				"          ORDER_ID as integer,",
+				"          CUSTOMER_KEY as integer,",
+				"          PRODUCT_KEY as integer,",
+				"          QUANTITY as integer,",
+				"          ORDER_DATE as date,",
+				"          NET_AMOUNT as string,",
+				"          TAX_MONEY as string,",
+				"          TOTAL_AMOUNT as string,",
+				"          ROW_INSERTED_DATE as date,",
+				"          ROW_INSERTED_BY as integer,",
+				"          CATEGORY_NAME as string,",
+				"          TITLE as string,",
+				"          ACTOR as string,",
+				"          PRICE as double,",
+				"          QUAN_IN_STOCK as integer,",
+				"          SALES as integer,",
+				"          TOTAL_SALES as double,",
+				"          PRICE_BUCKETS as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ORDER_LINE_ID,",
+				"          ORDER_ID,",
+				"          CUSTOMER_KEY,",
+				"          PRODUCT_KEY,",
+				"          QUANTITY,",
+				"          ORDER_DATE,",
+				"          NET_AMOUNT,",
+				"          TAX_MONEY,",
+				"          TOTAL_AMOUNT,",
+				"          ROW_INSERTED_DATE,",
+				"          ROW_INSERTED_BY,",
+				"          CATEGORY_NAME,",
+				"          TITLE,",
+				"          ACTOR,",
+				"          PRICE,",
+				"          QUAN_IN_STOCK,",
+				"          SALES,",
+				"          TOTAL_SALES,",
+				"          PRICE_BUCKETS",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
