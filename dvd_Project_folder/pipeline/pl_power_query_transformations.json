@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "pl_power_query_transformations",
 	"properties": {
 		"activities": [
 			{
