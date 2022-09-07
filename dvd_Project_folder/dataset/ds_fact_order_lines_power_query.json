@@ -39,8 +39,9 @@
 			},
 			{
 				"name": "PRICE",
-				"type": "int",
-				"precision": 10
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
 			},
 			{
 				"name": "NET_AMOUNT",
@@ -64,9 +65,10 @@
 				"precision": 10
 			},
 			{
-				"name": "TOTAL SALES",
-				"type": "int",
-				"precision": 10
+				"name": "TOTAL_SALES",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
 			},
 			{
 				"name": "PRICE_BUCKETS",
