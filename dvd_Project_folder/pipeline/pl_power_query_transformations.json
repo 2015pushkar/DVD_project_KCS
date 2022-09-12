@@ -33,7 +33,7 @@
 										"referenceName": "storagepowerquery",
 										"type": "DatasetReference"
 									},
-									"script": "sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> UserQuerystoragepowerquery"
+									"script": "sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['output01.txt'],\n\tmapColumn(\n\t\tORDER_LINE_ID,\n\t\tORDER_ID,\n\t\tCUSTOMER_KEY,\n\t\tPRODUCT_KEY,\n\t\tQUANTITY,\n\t\tORDER_DATE,\n\t\tNET_AMOUNT,\n\t\tTAX_MONEY,\n\t\tTOTAL_AMOUNT,\n\t\tROW_INSERTED_DATE,\n\t\tROW_INSERTED_BY,\n\t\tPRICE,\n\t\tPRODUCT_PRICE\n\t),\n\tpartitionBy('hash', 1)) ~> UserQuerystoragepowerquery"
 								}
 							]
 						}
