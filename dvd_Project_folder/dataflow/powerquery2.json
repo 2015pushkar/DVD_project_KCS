@@ -1,0 +1,28 @@
+{
+	"name": "powerquery2",
+	"properties": {
+		"type": "WranglingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "df_fact_orderlines",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~>  df_fact_orderlines",
+					"dataset": {
+						"referenceName": "df_fact_orderlines",
+						"type": "DatasetReference"
+					}
+				},
+				{
+					"name": "SQL_o_DIM2",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~>  SQL_o_DIM2",
+					"dataset": {
+						"referenceName": "SQL_o_DIM2",
+						"type": "DatasetReference"
+					}
+				}
+			],
+			"script": "section Section1;\r\nshared df_fact_orderlines = let AdfDoc = Sql.Database(\"dvdserverkrtrimaiq.database.windows.net\", \"srcDB_dvd\", [CreateNavigationProperties = false]), InputTable = AdfDoc{[Schema=\"dbo\",Item=\"fact_order_lines\"]}[Data] in InputTable;\r\nshared SQL_o_DIM2 = let AdfDoc = Sql.Database(\"dvdserverkrtrimaiq.database.windows.net\", \"srcDB_dvd\", [CreateNavigationProperties = false]), InputTable = AdfDoc{[Schema=\"dbo\",Item=\"dim_products\"]}[Data] in InputTable;\r\nshared Merge = let\n  Source = Table.NestedJoin(df_fact_orderlines, {\"PRODUCT_KEY\"}, SQL_o_DIM2, {\"S_KEY\"}, \"SQL_o_DIM2\", JoinKind.LeftOuter),\n  #\"Expanded SQL_o_DIM2\" = Table.ExpandTableColumn(Source, \"SQL_o_DIM2\", {\"PRICE\"}, {\"PRICE\"}),\n  #\"Added custom\" = Table.TransformColumnTypes(Table.AddColumn(#\"Expanded SQL_o_DIM2\", \"PRODUCT_PRICE\", each Double.From([PRICE]) * [QUANTITY]), {{\"PRODUCT_PRICE\", type text}})\nin\n  #\"Added custom\";\r\n",
+			"documentLocale": "en-us"
+		}
+	}
+}
