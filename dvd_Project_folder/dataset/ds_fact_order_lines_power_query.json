@@ -30,8 +30,8 @@
 			},
 			{
 				"name": "QUANTITY",
-				"type": "smallint",
-				"precision": 5
+				"type": "int",
+				"precision": 10
 			},
 			{
 				"name": "ORDER_DATE",
@@ -39,21 +39,20 @@
 			},
 			{
 				"name": "PRICE",
-				"type": "decimal",
-				"precision": 18,
-				"scale": 0
+				"type": "float",
+				"precision": 15
 			},
 			{
 				"name": "NET_AMOUNT",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "TAX_MONEY",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "TOTAL_AMOUNT",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "ROW_INSERTED_DATE",
@@ -66,13 +65,12 @@
 			},
 			{
 				"name": "TOTAL_SALES",
-				"type": "decimal",
-				"precision": 18,
-				"scale": 0
+				"type": "float",
+				"precision": 15
 			},
 			{
 				"name": "PRICE_BUCKETS",
-				"type": "varchar"
+				"type": "nvarchar"
 			}
 		],
 		"typeProperties": {

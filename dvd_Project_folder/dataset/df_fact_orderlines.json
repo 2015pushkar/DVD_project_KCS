@@ -33,8 +33,8 @@
 			},
 			{
 				"name": "QUANTITY",
-				"type": "int",
-				"precision": 10
+				"type": "smallint",
+				"precision": 5
 			},
 			{
 				"name": "ORDER_DATE",
