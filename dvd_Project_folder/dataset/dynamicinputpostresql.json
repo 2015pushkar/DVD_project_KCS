@@ -1,0 +1,28 @@
+{
+	"name": "dynamicinputpostresql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_dynamicinput_postgresql",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "FileName",
+				"container": "dynamicinputpostgresql"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
