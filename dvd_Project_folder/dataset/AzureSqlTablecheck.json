@@ -1,12 +1,12 @@
 {
-	"name": "AzureSqlTableforcopy",
+	"name": "AzureSqlTablecheck",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "sql_DB_SOURCE",
+			"referenceName": "AzureSqlDatabasecheck",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"table": {
+			"tablename": {
 				"type": "string"
 			}
 		},
@@ -15,7 +15,7 @@
 		"schema": [],
 		"typeProperties": {
 			"table": {
-				"value": "@dataset().table",
+				"value": "@dataset().tablename",
 				"type": "Expression"
 			}
 		}

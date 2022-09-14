@@ -23,12 +23,8 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "Postgresql_dynamic_copy",
-						"type": "DatasetReference",
-						"parameters": {
-							"TableName": "table_name",
-							"SchemaName": "table_schema"
-						}
+						"referenceName": "PostgreSqlTable1",
+						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
 				}
@@ -68,15 +64,9 @@
 									"type": "PostgreSqlSource"
 								},
 								"sink": {
-									"type": "DelimitedTextSink",
-									"storeSettings": {
-										"type": "AzureBlobStorageWriteSettings"
-									},
-									"formatSettings": {
-										"type": "DelimitedTextWriteSettings",
-										"quoteAllText": true,
-										"fileExtension": ".txt"
-									}
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
 								},
 								"enableStaging": false,
 								"translator": {
@@ -106,11 +96,11 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "dynamicinputpostresql",
+									"referenceName": "AzureSqlTableforcopy",
 									"type": "DatasetReference",
 									"parameters": {
-										"FileName": {
-											"value": "@concat(item().table_schema,'_',item().table_name,'.csv')",
+										"table": {
+											"value": "@item().table_name",
 											"type": "Expression"
 										}
 									}
