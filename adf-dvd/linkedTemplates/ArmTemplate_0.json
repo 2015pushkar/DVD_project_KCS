@@ -7,9 +7,21 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-dvd"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
 		"AzureBlobStorage_in_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_in'"
+		},
+		"AzureDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage'"
+		},
+		"AzureSqlDatabasecheck_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabasecheck'"
 		},
 		"PostgreSql_input_connectionString": {
 			"type": "secureString",
@@ -18,6 +30,10 @@
 		"ls_cus_test_in_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_cus_test_in'"
+		},
+		"ls_dynamicinput_postgresql_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_dynamicinput_postgresql'"
 		},
 		"ls_forINPUTDB_connectionString": {
 			"type": "secureString",
@@ -30,12 +46,29 @@
 		"staging_server_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'staging_server'"
+		},
+		"AzureDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlsgen2synapse2015.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage_in')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -45,6 +78,36 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureBlobStorage_in_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabasecheck')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabasecheck_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -71,6 +134,19 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('ls_cus_test_in_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_dynamicinput_postgresql')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_dynamicinput_postgresql_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -125,6 +201,42 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeCopyatDestination')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"tablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().tablename",
+							"type": "Expression"
+						},
+						"fileSystem": "adlsgen2synapsetest2015container"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSQLstart_date_fetch')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -149,6 +261,62 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "start_date_fetch"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTablecheck')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabasecheck",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"tablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"table": {
+						"value": "@dataset().tablename",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabasecheck')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableforcopy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_DB_SOURCE",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"table": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
 				}
 			},
 			"dependsOn": [
@@ -187,6 +355,62 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PostgreSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "oltp_ds2",
+					"table": "address"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Postgresql_dynamic_copy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "PostgreSql_input",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "string"
+					},
+					"SchemaName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
 			]
 		},
 		{
@@ -289,7 +513,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "Dim2Products"
+					"table": "dim_products"
 				}
 			},
 			"dependsOn": [
@@ -318,362 +542,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/categories_in')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "PostgreSql_input",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "inputs_from_postgresqlDB"
-				},
-				"annotations": [],
-				"type": "PostgreSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "oltp_ds2",
-					"table": "categories"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/country_in')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "PostgreSql_input",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "inputs_from_postgresqlDB"
-				},
-				"annotations": [],
-				"type": "PostgreSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "oltp_ds2",
-					"table": "country"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/credit_card_in')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "PostgreSql_input",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "inputs_from_postgresqlDB"
-				},
-				"annotations": [],
-				"type": "PostgreSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "oltp_ds2",
-					"table": "credit_card"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/customer_hist_in')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "PostgreSql_input",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "inputs_from_postgresqlDB"
-				},
-				"annotations": [],
-				"type": "PostgreSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "oltp_ds2",
-					"table": "customer_hist"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/customer_stag')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage_in",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "ostagingstore"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_in')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/customers_in')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "PostgreSql_input",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "inputs_from_postgresqlDB"
-				},
-				"annotations": [],
-				"type": "PostgreSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "oltp_ds2",
-					"table": "customers"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/PostgreSql_input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_fact_orderlines')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "sql_DB_SOURCE",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "sql_input"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ORDER_LINE_ID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ORDER_ID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CUSTOMER_KEY",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "PRODUCT_KEY",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "QUANTITY",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ORDER_DATE",
-						"type": "date"
-					},
-					{
-						"name": "NET_AMOUNT",
-						"type": "varchar"
-					},
-					{
-						"name": "TAX_MONEY",
-						"type": "varchar"
-					},
-					{
-						"name": "TOTAL_AMOUNT",
-						"type": "varchar"
-					},
-					{
-						"name": "ROW_INSERTED_DATE",
-						"type": "date"
-					},
-					{
-						"name": "ROW_INSERTED_BY",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "fact_order_lines"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_Inventory_sql')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "sql_DB_SOURCE",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "inputsforOLTP"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "PROD_ID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "QUAN_IN_STOCK",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SALES",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ROW_INSERTED_DATE",
-						"type": "date"
-					},
-					{
-						"name": "ROW_UPDATED_DATE",
-						"type": "date"
-					},
-					{
-						"name": "ROW_INSERTED_BY",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ROW_UPDATED_BY",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "inventory"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/sql_DB_SOURCE')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_address')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage_in",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "blob_input_data"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "address.csv",
-						"container": "vulnerability-assessment"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "CUSTOMER_ID",
-						"type": "String"
-					},
-					{
-						"name": "ADDRESS1",
-						"type": "String"
-					},
-					{
-						"name": "ADDRESS2",
-						"type": "String"
-					},
-					{
-						"name": "CITY",
-						"type": "String"
-					},
-					{
-						"name": "STATE",
-						"type": "String"
-					},
-					{
-						"name": "COUNTRY_CODE",
-						"type": "String"
-					},
-					{
-						"name": "ZIP",
-						"type": "String"
-					},
-					{
-						"name": "ROW_INSERTED_DATE",
-						"type": "String"
-					},
-					{
-						"name": "ROW_UPDATED_DATE",
-						"type": "String"
-					},
-					{
-						"name": "ROW_INSERTED_BY",
-						"type": "String"
-					},
-					{
-						"name": "ROW_UPDATED_BY",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_in')]"
 			]
 		}
 	]

@@ -7,9 +7,21 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-dvd"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
 		"AzureBlobStorage_in_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_in'"
+		},
+		"AzureDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage'"
+		},
+		"AzureSqlDatabasecheck_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabasecheck'"
 		},
 		"PostgreSql_input_connectionString": {
 			"type": "secureString",
@@ -18,6 +30,10 @@
 		"ls_cus_test_in_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_cus_test_in'"
+		},
+		"ls_dynamicinput_postgresql_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_dynamicinput_postgresql'"
 		},
 		"ls_forINPUTDB_connectionString": {
 			"type": "secureString",
@@ -30,6 +46,10 @@
 		"staging_server_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'staging_server'"
+		},
+		"AzureDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlsgen2synapse2015.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -58,14 +78,26 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
 					"AzureBlobStorage_in_connectionString": {
 						"value": "[parameters('AzureBlobStorage_in_connectionString')]"
+					},
+					"AzureDataLakeStorage_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage_accountKey')]"
+					},
+					"AzureSqlDatabasecheck_connectionString": {
+						"value": "[parameters('AzureSqlDatabasecheck_connectionString')]"
 					},
 					"PostgreSql_input_connectionString": {
 						"value": "[parameters('PostgreSql_input_connectionString')]"
 					},
 					"ls_cus_test_in_connectionString": {
 						"value": "[parameters('ls_cus_test_in_connectionString')]"
+					},
+					"ls_dynamicinput_postgresql_connectionString": {
+						"value": "[parameters('ls_dynamicinput_postgresql_connectionString')]"
 					},
 					"ls_forINPUTDB_connectionString": {
 						"value": "[parameters('ls_forINPUTDB_connectionString')]"
@@ -75,6 +107,9 @@
 					},
 					"staging_server_connectionString": {
 						"value": "[parameters('staging_server_connectionString')]"
+					},
+					"AzureDataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage_properties_typeProperties_url')]"
 					}
 				}
 			},

@@ -5,13 +5,25 @@
 		"factoryName": {
 			"value": "adf-dvd"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
 		"AzureBlobStorage_in_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage_accountKey": {
+			"value": ""
+		},
+		"AzureSqlDatabasecheck_connectionString": {
 			"value": ""
 		},
 		"PostgreSql_input_connectionString": {
 			"value": ""
 		},
 		"ls_cus_test_in_connectionString": {
+			"value": ""
+		},
+		"ls_dynamicinput_postgresql_connectionString": {
 			"value": ""
 		},
 		"ls_forINPUTDB_connectionString": {
@@ -22,6 +34,9 @@
 		},
 		"staging_server_connectionString": {
 			"value": ""
+		},
+		"AzureDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://adlsgen2synapse2015.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"value": ""
